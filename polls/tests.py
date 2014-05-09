@@ -1,9 +1,10 @@
+import datetime
+
 from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.test import TestCase
-import datetime
 
-from polls.models import Poll
+from .models import Poll
 
 
 class PollMethodTests(TestCase):
@@ -32,14 +33,17 @@ class PollMethodTests(TestCase):
         recent_poll = Poll(pub_date=timezone.now() - datetime.timedelta(hours=1))
         self.assertEqual(recent_poll.was_published_recently(), True)
 
+
 def create_poll(question, days):
     """
     Creates a poll with the given `question` published the given number of
     `days` offset to now (negative for polls published in the past,
     positive for polls that have yet to be published).
     """
-    return Poll.objects.create(question=question,
-        pub_date=timezone.now() + datetime.timedelta(days=days))
+    return Poll.objects.create(
+        question=question,
+        pub_date=timezone.now() + datetime.timedelta(days=days)
+    )
 
 
 class PollViewTests(TestCase):
@@ -95,7 +99,7 @@ class PollViewTests(TestCase):
         response = self.client.get(reverse('polls:index'))
         self.assertQuerysetEqual(
             response.context['latest_poll_list'],
-             ['<Poll: Past poll 2.>', '<Poll: Past poll 1.>']
+            ['<Poll: Past poll 2.>', '<Poll: Past poll 1.>']
         )
 
 
